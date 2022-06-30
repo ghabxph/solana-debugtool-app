@@ -1,0 +1,20 @@
+{
+  "name": "solana-debugtool-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:ghabxph/solana-debugtool-app.git",
+  "author": "Marc Par <marc.par10@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "start": "ts-node ./src/index.ts"
+  },
+  "dependencies": {
+    "@solana/spl-token": "^0.2.0",
+    "@solana/web3.js": "^1.46.0"
+  }
+}
