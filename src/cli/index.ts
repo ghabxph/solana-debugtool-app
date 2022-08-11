@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { findOffsetFromAccountInfo } from './util';
+import { findOffsetFromAccountInfo } from '../util';
 
 inquirer.prompt({
     type: "list",
