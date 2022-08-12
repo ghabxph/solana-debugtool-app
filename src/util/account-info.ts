@@ -1,8 +1,17 @@
 import * as solana from "@solana/web3.js";
-import { connection } from "./common";
 import fs from 'fs';
+import { getAccountInfo } from ".";
 
-export async function getAccountInfo(address: string, cache: boolean = true): Promise<solana.AccountInfo<Buffer>> {
+/**
+ * Get account info. Once downloaded, it'll be cached. Setting cache parameter to false
+ * will re-download the latest account info from the blockchain.
+ *
+ * @param address Account to fetch
+ * @param connection Solana connection instance to use
+ * @param cache Whether fetch from cache
+ * @returns Returns the account info, or will throw an error if account does not exist.
+ */
+ export async function _getAccountInfo(address: string, connection: solana.Connection, cache: boolean): Promise<solana.AccountInfo<Buffer>> {
     const path = `./.accounts/${address}.json`;
     if (cache === true) {
         console.log(`Checking whether ${address} is cached.`);
@@ -37,7 +46,7 @@ export async function getAccountInfo(address: string, cache: boolean = true): Pr
  * @param address Address of account to fetch
  * @param needle Base58-encoded bytes to find
  */
-export async function findOffsetFromAccountInfo(address: string, needle: string) {
+ export async function _findOffsetFromAccountInfo(address: string, needle: string): Promise<void> {
     const accountInfo = await getAccountInfo(address);
     for (let i = 0; i < accountInfo.data.length; i++) {
         const raw = accountInfo?.data.subarray(i, i + 32);

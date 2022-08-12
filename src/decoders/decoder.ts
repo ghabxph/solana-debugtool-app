@@ -1,6 +1,5 @@
 import * as solana from "@solana/web3.js";
-import { AccountInfo } from "@solana/web3.js";
-import { connection } from "../common";
+import { getAccountInfo } from "../util";
 
 export abstract class Decoder {
 
@@ -12,7 +11,7 @@ export abstract class Decoder {
     /**
      * Account address
      */
-    protected abstract address: solana.PublicKey;
+    protected abstract address: string;
 
     /**
      * Connection instance
@@ -23,16 +22,19 @@ export abstract class Decoder {
      * Account info data
      */
     protected get data(): Promise<Uint8Array> {
-        if (this._data === null) {
-            return this.connection.getAccountInfo(this.address).then(info => {
+        if (this._data.length === 0) {
+            console.log(`Decoding ${this.address} account`);
+            return getAccountInfo(this.address, this.connection).then(info => {
                 if (info?.data !== undefined) {
-                    this._data = info.data;
+                    console.log(`Success. Account size: ${info?.data.length}\n`);
+                    this._data = new Uint8Array(info.data);
+                    return this._data;
                 }
+                console.log(`Account not initialized.`);
                 return new Uint8Array();
             });
-        } else {
-            return Promise.resolve(new Uint8Array());
         }
+        return Promise.resolve(this._data);
     }
 
     /**
