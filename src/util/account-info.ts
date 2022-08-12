@@ -11,7 +11,7 @@ import { getAccountInfo } from ".";
  * @param cache Whether fetch from cache
  * @returns Returns the account info, or will throw an error if account does not exist.
  */
- export async function _getAccountInfo(address: string, connection: solana.Connection, cache: boolean): Promise<solana.AccountInfo<Buffer>> {
+export async function _getAccountInfo(address: string, connection: solana.Connection, cache: boolean): Promise<solana.AccountInfo<Buffer>> {
     const path = `./.accounts/${address}.json`;
     if (cache === true) {
         console.log(`Checking whether ${address} is cached.`);
@@ -46,7 +46,7 @@ import { getAccountInfo } from ".";
  * @param address Address of account to fetch
  * @param needle Base58-encoded bytes to find
  */
- export async function _findOffsetFromAccountInfo(address: string, needle: string): Promise<void> {
+export async function _findOffsetFromAccountInfo(address: string, needle: string): Promise<void> {
     const accountInfo = await getAccountInfo(address);
     for (let i = 0; i < accountInfo.data.length; i++) {
         const raw = accountInfo?.data.subarray(i, i + 32);
@@ -57,4 +57,24 @@ import { getAccountInfo } from ".";
             return;
         }
     }
+}
+
+const accounts = new Map<string, string>();
+accounts.set('11111111111111111111111111111111', 'System Program');
+accounts.set('SysvarRent111111111111111111111111111111111', 'Rent Sysvar');
+accounts.set('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'Token Program');
+accounts.set('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL', 'Associated Token Account');
+accounts.set('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So', 'Marinade Staked SOL (mSOL)');
+accounts.set('MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD', 'Marinade Staking Program');
+
+/**
+ * Returns the name of given account that is known by us.
+ *
+ * @param address
+ * @returns Returns account label if exists
+ */
+export function _getAccountName(address: string | solana.PublicKey): string {
+    const addr = address instanceof solana.PublicKey ? address.toString() : address;
+    const label = accounts.get(addr);
+    return label ?? addr;
 }

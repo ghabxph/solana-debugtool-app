@@ -1,5 +1,6 @@
 import * as solana from "@solana/web3.js";
 import { getAccountInfo } from "../util";
+import { BN } from "@project-serum/anchor";
 
 export abstract class Decoder {
 
@@ -38,7 +39,8 @@ export abstract class Decoder {
     }
 
     /**
-     * 
+     * Get public key starting from given offset
+     *
      * @param offset Offset of public key
      * @returns 
      */
@@ -48,5 +50,27 @@ export abstract class Decoder {
             throw Error(`Offset exceeded account info data size: ${offset + 32} > ${data.length}`);
         }
         return new solana.PublicKey(data.subarray(offset, offset + 32));
+    }
+
+    /**
+     * Get unsigned integer (64-bytes) starting from given offset
+     *
+     * @param offset
+     */
+    protected async getU64(offset: number): Promise<BN> {
+        const data = await this.data;
+        if (offset + 32 >= data.length) {
+            throw Error(`Offset exceeded account info data size: ${offset + 32} > ${data.length}`);
+        }
+        return new BN(data.subarray(offset, offset + 8), 'le')
+    }
+
+    /**
+     * Override account data
+     *
+     * @param data Account data
+     */
+    setData(data: Uint8Array) {
+        this._data = data;
     }
 }

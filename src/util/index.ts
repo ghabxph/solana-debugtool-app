@@ -1,6 +1,6 @@
 import * as solana from "@solana/web3.js";
 import { connection as defaultConnection } from "../common";
-import { _findOffsetFromAccountInfo, _getAccountInfo } from "./account-info";
+import { _findOffsetFromAccountInfo, _getAccountInfo, _getAccountName } from "./account-info";
 
 /**
  * Get account info. Once downloaded, it'll be cached. Setting cache parameter to false
@@ -53,4 +53,27 @@ export async function getAccountInfo(address: string, connection: solana.Connect
  */
 export async function findOffsetFromAccountInfo(address: string, needle: string): Promise<void> {
     return _findOffsetFromAccountInfo(address, needle);
+}
+
+/**
+ * Returns the name of given account that is known by us.
+ *
+ * @param address Address in string
+ */
+export function getAccountName(address: string): string;
+
+/**
+ * Returns the name of given account that is known by us.
+ *
+ * @param address Address in public key form
+ */
+export function getAccountName(address: solana.PublicKey): string;
+
+/**
+ * Returns the name of given account that is known by us.
+ *
+ * @param address
+ */
+export function getAccountName(address: string | solana.PublicKey): string {
+    return _getAccountName(address);
 }

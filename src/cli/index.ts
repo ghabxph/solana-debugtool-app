@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import { analyzeTransaction } from './analyze-transaction';
 import { decodeAccount } from './decode-account';
 import { decodeTransaction } from './decode-transaction';
 import { findAccount } from './find-account';
@@ -11,6 +12,7 @@ inquirer.prompt({
         "Find solana address from account",
         "Decode known solana account",
         "Decode transaction",
+        "Analyze transaction",
     ]
 }).then((answer) => {
     switch(answer.action) {
@@ -22,6 +24,9 @@ inquirer.prompt({
             break;
         case "Decode transaction":
             decodeTransaction();
+            break;
+        case "Analyze transaction":
+            analyzeTransaction();
             break;
     }
 });
