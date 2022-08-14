@@ -69,6 +69,8 @@ accounts.set('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'Token Program');
 accounts.set('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL', 'Associated Token Account');
 accounts.set('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So', 'Marinade Staked SOL (mSOL)');
 accounts.set('MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD', 'Marinade Staking Program');
+accounts.set('Port7uDYB3wk6GJAw4KT1WpTeMtSu9bTcChBHkX2LfR', 'Port Finance Program');
+accounts.set('stkarvwmSzv2BygN5e2LeTwimTczLWHCKPKGC2zVLiq', 'Port Finance Staking Program');
 
 /**
  * Returns the name of given account that is known by us.
