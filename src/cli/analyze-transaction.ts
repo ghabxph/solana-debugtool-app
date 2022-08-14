@@ -2,7 +2,7 @@ import { AccountInfo, KeyedAccountInfo, PublicKey, SystemProgram } from '@solana
 import inquirer from 'inquirer';
 import { connection } from '../common';
 import { TokenDecoder } from '../decoders/token-program/token-decoder';
-import { getAccountInfo, getAccountName } from '../util';
+import { enableLogging, findOffsetFromAccountInfo, getAccountInfo, getAccountName } from '../util';
 
 /**
  * Entrypoint
@@ -41,6 +41,7 @@ export async function analyzeTransaction() {
 async function downloadAccounts(accountKeys: Array<PublicKey>): Promise<Array<KeyedAccountInfo>> {
     console.log(``);
     console.log(`Downloading accounts...`);
+    enableLogging(false);
     const accountInfos: Array<KeyedAccountInfo> = [];
     for (let i = 0; i < accountKeys.length; i++) {
         try {
@@ -49,7 +50,9 @@ async function downloadAccounts(accountKeys: Array<PublicKey>): Promise<Array<Ke
                 accountInfo: await getAccountInfo(accountKeys[i].toString())
             });
         } catch (e) {
+            enableLogging();
             console.log(`${e}`);
+            enableLogging(false);
             accountInfos.push({
                 accountId: accountKeys[i],
                 accountInfo: {
@@ -61,12 +64,14 @@ async function downloadAccounts(accountKeys: Array<PublicKey>): Promise<Array<Ke
             });
         }
     }
+    enableLogging();
     return accountInfos;
 }
 
 /**
  * Analyze accounts
- * @param accountKeys
+ *
+ * @param accountInfos
  */
 async function analyzeAccounts(accountInfos: Array<KeyedAccountInfo>) {
     console.log(``);
@@ -80,12 +85,22 @@ async function analyzeAccounts(accountInfos: Array<KeyedAccountInfo>) {
         console.log(`Owner: ${getAccountName(accountInfo.owner)}`);
         console.log(`Initialized: ${accountInfo.lamports > 0 ? 'Yes': 'No'}`);
         console.log(`Size: ${accountInfo.data.length}`);
-        await decodeTokenAccount(accountInfos[i]);
-        await decodeMintAccount(accountInfos[i]);
+        const isTokenAccount = await decodeTokenAccount(accountInfos[i]);
+        const isMintAccount = await decodeMintAccount(accountInfos[i]);
+        const notInitialized = accountInfos[i].accountInfo.lamports === 0;
+        const isExecutable = accountInfos[i].accountInfo.executable;
+        const isSystemProgram = accountInfos[i].accountId.toString() === '11111111111111111111111111111111';
+        const isTokenProgram = accountInfos[i].accountId.toString() === 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+        const isRentSysvar = accountInfos[i].accountId.toString() === 'Sysvar1111111111111111111111111111111111111';
+        const isOwnedBySystemProgram = accountInfos[i].accountInfo.owner.toString() === '11111111111111111111111111111111';
+        const scanAccount = !(isTokenAccount || isMintAccount || notInitialized || isExecutable || isSystemProgram || isTokenProgram || isRentSysvar || isOwnedBySystemProgram);
+        if (scanAccount) {
+            await findAssociatedAccounts(accountInfos, i);
+        }
     }
 }
 
-async function decodeTokenAccount(account: KeyedAccountInfo) {
+async function decodeTokenAccount(account: KeyedAccountInfo): Promise<boolean> {
     const address = account.accountId.toString();
     const size = account.accountInfo.data.length;
     const owner = getAccountName(account.accountInfo.owner);
@@ -97,13 +112,34 @@ async function decodeTokenAccount(account: KeyedAccountInfo) {
         console.log(`Mint: ${getAccountName(await token.mint)}`);
         console.log(`Amount: ${await token.amount}`);
         console.log(`Owner: ${getAccountName(await token.owner)}`);
+        return true;
     }
+    return false;
 }
 
-async function decodeMintAccount(account: KeyedAccountInfo) {
+async function decodeMintAccount(account: KeyedAccountInfo): Promise<boolean> {
     const size = account.accountInfo.data.length;
-    const owner = getAccountName(account.accountId);
+    const owner = getAccountName(account.accountInfo.owner);
     if (size === 82 && owner === 'Token Program') {
         console.log('Type: Mint');
+        return true;
     }
+    return false;
+}
+
+async function findAssociatedAccounts(accounts: Array<KeyedAccountInfo>, index: number) {
+    const account = accounts[index];
+    for (let i = 0; i < accounts.length; i++) {
+        const find = accounts[i].accountId.toString();
+        enableLogging(false);
+        const isSystemProgram = find.toString() === '11111111111111111111111111111111';
+        if (!isSystemProgram) {
+            const offset = await findOffsetFromAccountInfo(account.accountId.toString(), find);
+            enableLogging();
+            if (offset > -1) {
+                console.log(`Account #${i + 1}: ${getAccountName(find)} found at offset: ${offset}`);
+            }
+        }
+    }
+    console.log(``);
 }

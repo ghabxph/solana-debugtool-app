@@ -1,6 +1,7 @@
 import * as solana from "@solana/web3.js";
 import { connection as defaultConnection } from "../common";
 import { _findOffsetFromAccountInfo, _getAccountInfo, _getAccountName } from "./account-info";
+import { _enableLogging } from "./logging";
 
 /**
  * Get account info. Once downloaded, it'll be cached. Setting cache parameter to false
@@ -50,8 +51,10 @@ export async function getAccountInfo(address: string, connection: solana.Connect
  *
  * @param address Address of account to fetch
  * @param needle Base58-encoded bytes to find
+ *
+ * @return Returns the index of address. Returns -1 if it does not exist.
  */
-export async function findOffsetFromAccountInfo(address: string, needle: string): Promise<void> {
+export async function findOffsetFromAccountInfo(address: string, needle: string): Promise<number> {
     return _findOffsetFromAccountInfo(address, needle);
 }
 
@@ -77,3 +80,10 @@ export function getAccountName(address: solana.PublicKey): string;
 export function getAccountName(address: string | solana.PublicKey): string {
     return _getAccountName(address);
 }
+
+/**
+ * Enable / disable logging.
+ *
+ * @enable Set to false to disable logging. Default is true
+ */
+export const enableLogging = _enableLogging();

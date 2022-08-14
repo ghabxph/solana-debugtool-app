@@ -45,8 +45,10 @@ export async function _getAccountInfo(address: string, connection: solana.Connec
  *
  * @param address Address of account to fetch
  * @param needle Base58-encoded bytes to find
+ * 
+ * @return Returns the index of address. Returns -1 if it does not exist.
  */
-export async function _findOffsetFromAccountInfo(address: string, needle: string): Promise<void> {
+export async function _findOffsetFromAccountInfo(address: string, needle: string): Promise<number> {
     const accountInfo = await getAccountInfo(address);
     for (let i = 0; i < accountInfo.data.length; i++) {
         const raw = accountInfo?.data.subarray(i, i + 32);
@@ -54,9 +56,10 @@ export async function _findOffsetFromAccountInfo(address: string, needle: string
         console.log(`index: ${i} -- Finding: ${needle} -- ${guess}`);
         if (needle === guess.toString()) {
             console.log(`Match at ${i}!`);
-            return;
+            return i;
         }
     }
+    return -1;
 }
 
 const accounts = new Map<string, string>();
