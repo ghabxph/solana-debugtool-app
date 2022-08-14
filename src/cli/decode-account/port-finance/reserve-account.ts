@@ -28,7 +28,7 @@ class ReserveAccount extends Decoder {
      * Reserve collateral mint address
      */
     get reserveCollateralMint(): Promise<PublicKey> {
-        return this.getPublicKey(321);
+        return this.getPublicKey(231);
     }
 
     /**
