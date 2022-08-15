@@ -51,6 +51,13 @@ class ReserveAccount extends Decoder {
     get stakingPool(): Promise<PublicKey> {
         return this.getPublicKey(328);
     }
+
+    /**
+     * Get optional liquidity oracle public key
+     */
+     get liquidityOracle(): Promise<PublicKey> {
+        return this.getPublicKey(143);
+    }
 }
 
 export async function reserveAccount() {
@@ -70,5 +77,6 @@ export async function reserveAccount() {
     console.log(`lendingMarketAccount: ${await account.lendingMarketAccount}`);
     console.log(`destinationCollateral: ${await account.destinationCollateral}`);
     console.log(`stakingPool: ${await account.stakingPool}`);
+    console.log(`liquidityOracle: ${await account.liquidityOracle}`);
     console.log(``);
 }
