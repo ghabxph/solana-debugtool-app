@@ -1,3 +1,4 @@
+import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes";
 import * as solana from "@solana/web3.js";
 import fs from 'fs';
 import { app, getAccountInfo } from ".";
@@ -49,16 +50,30 @@ export async function _getAccountInfo(address: string, cache: boolean): Promise<
  */
 export async function _findOffsetFromAccountInfo(address: string, needle: string): Promise<number> {
     const accountInfo = await getAccountInfo(address);
+    const rawNeedle = bs58.decode(needle);
     for (let i = 0; i < accountInfo.data.length; i++) {
-        const raw = accountInfo?.data.subarray(i, i + 32);
-        const guess = new solana.PublicKey(raw);
-        console.log(`index: ${i} -- Finding: ${needle} -- ${guess}`);
-        if (needle === guess.toString()) {
+        const length = rawNeedle.length;
+        const raw = accountInfo?.data.subarray(i, i + length);
+        const encoded = bs58.encode(raw);
+        if (needle === encoded) {
             console.log(`Match at ${i}!`);
             return i;
         }
     }
     return -1;
+    // Commented out for reference (to be deleted)
+    // The implementation below is incorrect. I got lazy and I just implemented scanner for public key.
+    // But this function's goal is to be general purpose, thus incorrect.
+    // for (let i = 0; i < accountInfo.data.length; i++) {
+    //     const raw = accountInfo?.data.subarray(i, i + 32);
+    //     const guess = new solana.PublicKey(raw);
+    //     console.log(`index: ${i} -- Finding: ${needle} -- ${guess}`);
+    //     if (needle === guess.toString()) {
+    //         console.log(`Match at ${i}!`);
+    //         return i;
+    //     }
+    // }
+    // return -1;
 }
 
 const accounts = new Map<string, string>();

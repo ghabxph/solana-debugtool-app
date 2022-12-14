@@ -1,5 +1,8 @@
+import { BN } from '@project-serum/anchor';
+import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes';
 import inquirer from 'inquirer';
 import { init } from '../util';
+import { U64 } from '../util/numbers/u64';
 import { analyzeTransaction } from './analyze-transaction';
 import { decodeAccount } from './decode-account';
 import { decodeTransaction } from './decode-transaction';
@@ -13,7 +16,7 @@ import { findAccount } from './find-account';
         name: "endpoint",
         message: "Please choose endpoint",
         choices: [
-            "http://localhost:8899",
+            "http://127.0.0.1:8899",
             "https://api.mainnet-beta.solana.com",
         ]
     });
