@@ -1,5 +1,5 @@
 import { Connection } from "@solana/web3.js";
-import { AppNotYetInitialized } from "./error";
+import { AppNotYetInitialized } from "./util/error";
 
 export class App {
 

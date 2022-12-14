@@ -26,14 +26,14 @@ import { findAccount } from './find-account';
         name: "action",
         message: "Please choose action",
         choices: [
-            "Find solana address from account",
+            "Analyze an account",
             "Decode known solana account",
             "Decode transaction",
             "Analyze transaction",
         ]
     });
     switch(action) {
-        case "Find solana address from account":
+        case "Analyze an account":
             await findAccount();
             break;
         case "Decode known solana account":

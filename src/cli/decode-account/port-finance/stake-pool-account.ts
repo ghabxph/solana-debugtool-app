@@ -1,23 +1,5 @@
-import { Connection, PublicKey } from "@solana/web3.js";
-import { Decoder } from "../../../decoders/decoder";
+import { StakePoolAccount } from "../../../decoders/port-finance/stake-pool-account";
 import inquirer from "inquirer";
-
-class StakePoolAccount extends Decoder {
-
-    constructor(
-        /**
-         * Account address
-         */
-        protected address: string,
-    ) { super() }
-
-    /**
-     * Get derived lending market authority
-     */
-    get lendingMarketAuthority(): Promise<PublicKey> {
-        return this.getPublicKey(1)
-    }
-}
 
 export async function stakePoolAccount() {
     const { address } = await inquirer.prompt([

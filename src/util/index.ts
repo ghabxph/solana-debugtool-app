@@ -1,5 +1,5 @@
 import * as solana from "@solana/web3.js";
-import { App } from "../cli/app";
+import { App } from "../app";
 import { _findOffsetFromAccountInfo, _getAccountInfo, _getAccountName } from "./account-info";
 import { _enableLogging } from "./logging";
 

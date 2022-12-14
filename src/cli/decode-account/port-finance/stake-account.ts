@@ -1,23 +1,5 @@
-import { Connection, PublicKey } from "@solana/web3.js";
-import { Decoder } from "../../../decoders/decoder";
+import { StakeAccount } from "../../../decoders/port-finance/stake-account";
 import inquirer from "inquirer";
-
-class StakeAccount extends Decoder {
-
-    constructor(
-        /**
-         * Account address
-         */
-        protected address: string,
-    ) { super() }
-
-    /**
-     * Get obligation owner address
-     */
-    get obligationOwner(): Promise<PublicKey> {
-        return this.getPublicKey(17)
-    }
-}
 
 export async function stakeAccount() {
     const { address } = await inquirer.prompt([
