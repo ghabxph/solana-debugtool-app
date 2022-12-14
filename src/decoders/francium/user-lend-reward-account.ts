@@ -1,8 +1,7 @@
-import { PublicKey } from '@solana/web3.js';
-// import { Decoder } from '../decoder';
+import * as anchor from "@project-serum/anchor";
 import { Decoder2 } from '../decoder2';
 
-export class UserLendRewardAccount extends Decoder2 {
+export class UserLendRewardAccount extends Decoder2<UserLendRewardAccount> {
 
     /**
      * Account info data
@@ -12,7 +11,7 @@ export class UserLendRewardAccount extends Decoder2 {
     /**
      * StakeAmount
      */
-    get stakeAmount(): Promise<PublicKey> {
+    get stakeAmount(): anchor.BN {
         return this.getU64(1);
     }
 }

@@ -17,12 +17,12 @@ const typeSize = {
     Blob230:   230,  // 230 bytes as Uint8Array(128)
 };
 
-export abstract class Decoder2 {
+export abstract class Decoder2<Child> {
 
     /**
      * Account info data
      */
-    protected abstract data: Buffer;
+    protected data: Buffer = Buffer.alloc(0);
 
     /**
      * Get public key starting from given offset
@@ -114,7 +114,7 @@ export abstract class Decoder2 {
      *
      * @param data Account data
      */
-    static fromBuffer<Child extends Decoder2>(data: Buffer, child: Child): Child {
+    static fromBuffer<Child extends Decoder2<Child>>(data: Buffer, child: Child): Child {
         child.data = data;
         return child;
     }
@@ -124,9 +124,35 @@ export abstract class Decoder2 {
      *
      * @param address
      */
-    static async fromAddress<Child extends Decoder2>(address: string, child: Child): Promise<Child> {
+    static async fromAddress<Child extends Decoder2<Child>>(address: string, child: Child): Promise<Child> {
         const info = await getAccountInfo(address);
         child.data = info.data;
         return child;
+    }
+
+    /**
+     * Create instance of decoder from given address
+     *
+     * @param address Public key address (as base58 string)
+     */
+    async fromAddress<Child extends Decoder2<Child>>(this: Child, address: anchor.web3.PublicKey): Promise<Child>;
+
+    /**
+     * Create instance of decoder from given address
+     *
+     * @param address Public key instance
+     */
+    async fromAddress<Child extends Decoder2<Child>>(this: Child, address: string): Promise<Child>;
+
+    /**
+     * Create instance of decoder from given address
+     *
+     * @param address (see overload)
+     */
+    async fromAddress<Child extends Decoder2<Child>>(this: Child, address: anchor.web3.PublicKey | string): Promise<Child> {
+        const _address = typeof address === 'string' ? new anchor.web3.PublicKey(address) : address;
+        const info = await getAccountInfo(_address.toString());
+        this.data = info!.data;
+        return this;
     }
 }
