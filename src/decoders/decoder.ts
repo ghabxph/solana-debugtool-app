@@ -15,17 +15,12 @@ export abstract class Decoder {
     protected abstract address: string;
 
     /**
-     * Connection instance
-     */
-    protected abstract connection: solana.Connection;
-
-    /**
      * Account info data
      */
     protected get data(): Promise<Uint8Array> {
         if (this._data.length === 0) {
             console.log(`Decoding ${this.address} account`);
-            return getAccountInfo(this.address, this.connection).then(info => {
+            return getAccountInfo(this.address).then(info => {
                 if (info?.data !== undefined) {
                     console.log(`Success. Account size: ${info?.data.length}\n`);
                     this._data = new Uint8Array(info.data);

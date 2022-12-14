@@ -1,5 +1,5 @@
 import * as solana from "@solana/web3.js";
-import { connection as defaultConnection } from "../common";
+import { App } from "../cli/app";
 import { _findOffsetFromAccountInfo, _getAccountInfo, _getAccountName } from "./account-info";
 import { _enableLogging } from "./logging";
 
@@ -17,10 +17,11 @@ export async function getAccountInfo(address: string): Promise<solana.AccountInf
  * will re-download the latest account info from the blockchain.
  *
  * @param address Account to fetch
+ * @param cache Whether fetch from cache
  * @param connection Solana connection instance to use
  * @returns Returns the account info, or will throw an error if account does not exist.
  */
-export async function getAccountInfo(address: string, connection: solana.Connection): Promise<solana.AccountInfo<Buffer>>;
+export async function getAccountInfo(address: string, cache: boolean): Promise<solana.AccountInfo<Buffer>>;
 
 /**
  * Get account info. Once downloaded, it'll be cached. Setting cache parameter to false
@@ -28,22 +29,10 @@ export async function getAccountInfo(address: string, connection: solana.Connect
  *
  * @param address Account to fetch
  * @param cache Whether fetch from cache
- * @param connection Solana connection instance to use
  * @returns Returns the account info, or will throw an error if account does not exist.
  */
-export async function getAccountInfo(address: string, connection: solana.Connection, cache: boolean): Promise<solana.AccountInfo<Buffer>>;
-
-/**
- * Get account info. Once downloaded, it'll be cached. Setting cache parameter to false
- * will re-download the latest account info from the blockchain.
- *
- * @param address Account to fetch
- * @param cache Whether fetch from cache
- * @param connection Solana connection instance to use
- * @returns Returns the account info, or will throw an error if account does not exist.
- */
-export async function getAccountInfo(address: string, connection: solana.Connection = defaultConnection, cache: boolean = true): Promise<solana.AccountInfo<Buffer>> {
-    return _getAccountInfo(address, connection, cache);
+export async function getAccountInfo(address: string, cache: boolean = true): Promise<solana.AccountInfo<Buffer>> {
+    return _getAccountInfo(address, cache);
 }
 
 /**
@@ -87,3 +76,17 @@ export function getAccountName(address: string | solana.PublicKey): string {
  * @enable Set to false to disable logging. Default is true
  */
 export const enableLogging = _enableLogging();
+
+/**
+ * Return app's singleton instance. Be sure to call `init` first.
+ *
+ * @returns App's singleton instnace
+ */
+export function app() { return App.instance }
+
+/**
+ * Initialize the app (call this one-time only)
+ *
+ * @param endpoint Valid solana endpoint
+ */
+export function init(endpoint: string) { App.init(endpoint) }

@@ -1,17 +1,16 @@
 import * as solana from "@solana/web3.js";
 import fs from 'fs';
-import { getAccountInfo } from ".";
+import { app, getAccountInfo } from ".";
 
 /**
  * Get account info. Once downloaded, it'll be cached. Setting cache parameter to false
  * will re-download the latest account info from the blockchain.
  *
  * @param address Account to fetch
- * @param connection Solana connection instance to use
  * @param cache Whether fetch from cache
  * @returns Returns the account info, or will throw an error if account does not exist.
  */
-export async function _getAccountInfo(address: string, connection: solana.Connection, cache: boolean): Promise<solana.AccountInfo<Buffer>> {
+export async function _getAccountInfo(address: string, cache: boolean): Promise<solana.AccountInfo<Buffer>> {
     const path = `./.accounts/${address}.json`;
     if (cache === true) {
         console.log(`Checking whether ${address} is cached.`);
@@ -32,7 +31,7 @@ export async function _getAccountInfo(address: string, connection: solana.Connec
         console.log(`Caching is disabled.`);
     }
     console.log(`Fetching latest account info of ${address}`);
-    const accountInfo = await connection.getAccountInfo(new solana.PublicKey(address));
+    const accountInfo = await app().connection.getAccountInfo(new solana.PublicKey(address));
     if (accountInfo === null || accountInfo.data === undefined) {
         throw Error(`Account: ${address} does not exist.`);
     }

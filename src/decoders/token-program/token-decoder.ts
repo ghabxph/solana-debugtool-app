@@ -1,5 +1,4 @@
 import { Connection, PublicKey } from '@solana/web3.js';
-import { connection as defaultConnection } from '../../common';
 import { Decoder } from '../decoder';
 import { BN } from "@project-serum/anchor";
 
@@ -10,11 +9,6 @@ export class TokenDecoder extends Decoder {
          * Account address
          */
         protected address: string,
-
-        /**
-         * Connection instance
-         */
-        protected connection: Connection = defaultConnection,
     ) { super() }
 
     /**

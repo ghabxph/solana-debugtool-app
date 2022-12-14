@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import inquirer from 'inquirer';
-import { connection } from '../common';
+import { app } from '../util';
 
 export async function decodeTransaction() {
     const { signature } = await inquirer.prompt([
@@ -11,7 +11,7 @@ export async function decodeTransaction() {
             
         }
     ]);
-    const tx = await connection.getTransaction(signature);
+    const tx = await app().connection.getTransaction(signature);
     const accountKeys = tx?.transaction.message.accountKeys as PublicKey[];
     for (let i = 0; i < accountKeys.length; i++) {
         console.log(`Account ${i + 1}: ${accountKeys[i]}`)

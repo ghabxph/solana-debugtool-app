@@ -1,6 +1,5 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import inquirer from 'inquirer';
-import { connection as defaultConnection } from '../../../common';
 import { Decoder } from '../../../decoders/decoder';
 
 class ReserveAccount extends Decoder {
@@ -10,11 +9,6 @@ class ReserveAccount extends Decoder {
          * Account address
          */
         protected address: string,
-
-        /**
-         * Connection instance
-         */
-        protected connection: Connection = defaultConnection,
     ) { super() }
 
     /**

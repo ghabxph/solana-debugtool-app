@@ -1,8 +1,7 @@
 import { AccountInfo, KeyedAccountInfo, PublicKey, SystemProgram } from '@solana/web3.js';
 import inquirer from 'inquirer';
-import { connection } from '../common';
 import { TokenDecoder } from '../decoders/token-program/token-decoder';
-import { enableLogging, findOffsetFromAccountInfo, getAccountInfo, getAccountName } from '../util';
+import { app, enableLogging, findOffsetFromAccountInfo, getAccountInfo, getAccountName } from '../util';
 
 /**
  * Entrypoint
@@ -16,7 +15,7 @@ export async function analyzeTransaction() {
             
         }
     ]);
-    const tx = await connection.getTransaction(signature);
+    const tx = await app().connection.getTransaction(signature);
     const accountKeys = tx?.transaction.message.accountKeys as PublicKey[];
     console.log(``);
     console.log(`Accounts for txs: ${signature}`);
